@@ -63,18 +63,26 @@ int main(void)
     printk("LED blinking on %s pin %d\n", led1.port->name, led1.pin);
 
 
-	while (1) {
-		gpio_pin_toggle_dt(&led1);
 
-		k_msleep(500);
+int64_t tempo_led0 = k_uptime_get();
+int64_t tempo_led1 = k_uptime_get();
 
-		gpio_pin_toggle_dt(&led1);
-		gpio_pin_toggle_dt(&led);
+while (1) {
+    int64_t agora = k_uptime_get();
 
-		k_msleep(500);
+    if (agora - tempo_led0 >= 1000) {
+        gpio_pin_toggle_dt(&led);
+        tempo_led0 += 1000;
+    }
 
-		gpio_pin_toggle_dt(&led);
-	}
+    if (agora - tempo_led1 >= 350) {
+        gpio_pin_toggle_dt(&led1);
+        tempo_led1 += 350;
+    }
+
+    k_msleep(1);
+}
+
 
     return 0;
 }
